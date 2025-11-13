@@ -13,7 +13,7 @@ export const Header = ({ sOpen }) => {
 
     return (
         <header>
-            <div className="flex gap-2 items-center h-16 border-b border-gray-300 px-4">
+            <div className="flex gap-2 items-center h-16 px-4 my-4">
                 {user ? (
                     <div className="ml-2 block sm:hidden">
                         <button onClick={sOpen}>
@@ -27,8 +27,8 @@ export const Header = ({ sOpen }) => {
                     </div>
                 ) : null}
                 <div className=" font-bold text-3xl flex items-center shrink-0">
-                    <img src={logo} alt="Logo" className="inline-block w-8 h-8" />
-                    <p className="mr-2.5 text-2xl font-bold text-slate-800 whitespace-nowrop hidden sm:block"> link Micro Blog</p>
+                    <img src={logo} alt="Logo" className="ml-5 inline-block w-8 h-8" />
+                    <p className="ml-0.5 text-3xl font-bold text-slate-800 whitespace-nowrop hidden sm:block"> link Micro Blog</p>
                 </div>
                 {/* <div className='flex bg-gray-200 rounded-4xl p-1 ml-4'>
           <div className='pl-2 pr-4'>

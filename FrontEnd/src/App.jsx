@@ -1,22 +1,28 @@
 import "./App.css";
 import { useState } from "react";
-import { BrowserRouter } from "react-router-dom";
 import { Header } from "./components/Header";
 import { Body } from "./components/Body";
 import { Footer } from "./components/Footer";
-import { AuthProvider, useAuth } from "./context/AuthProvider";
+import { AuthProvider } from "./context/AuthProvider";
 
 function App() {
     const [sidebarFlag, setSidebarFlag] = useState(false);
 
     return (
-        <>
-            <AuthProvider>
+        <AuthProvider>
+            <div className="min-h-screen flex flex-col">
+                {/* Header on top */}
                 <Header sOpen={() => setSidebarFlag(true)} />
-                <Body sFlag={sidebarFlag} sClose={() => setSidebarFlag(false)} />
+
+                {/* Main content grows to push footer down */}
+                <div className="flex-1">
+                    <Body sFlag={sidebarFlag} sClose={() => setSidebarFlag(false)} />
+                </div>
+
+                {/* Footer stays at the bottom */}
                 <Footer />
-            </AuthProvider>
-        </>
+            </div>
+        </AuthProvider>
     );
 }
 

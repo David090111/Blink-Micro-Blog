@@ -1,125 +1,132 @@
 // src/pages/Posts.jsx
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import API from "../api";
 
 export default function Posts() {
-  const [items, setItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [err, setErr] = useState("");
+    const [items, setItems] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [err, setErr] = useState("");
+    const navigate = useNavigate();
 
-useEffect(() => {
-  const ac = new AbortController();
+    useEffect(() => {
+        const ac = new AbortController();
 
-  (async () => {
-    setLoading(true);
-    setErr("");
-    try {
-      const { data } = await API.get("/posts", { signal: ac.signal });
-      console.log("[/posts] response =", data); // 👈 xem dữ liệu thực tế
+        (async () => {
+            try {
+                setLoading(true);
+                setErr("");
 
-      // chấp nhận nhiều dạng: [], {posts:[]}, {items:[]}, {data:[]}
-      const list =
-        (Array.isArray(data) && data) ||
-        (Array.isArray(data?.posts) && data.posts) ||
-        (Array.isArray(data?.items) && data.items) ||
-        (Array.isArray(data?.data) && data.data) ||
-        [];
+                const { data } = await API.get("/posts", {
+                    signal: ac.signal,
+                });
 
-      // chuẩn hoá id/slug & các field cần thiết
-      const normalized = list.map((p) => ({
-        id: p.id || p._id || p.slug || p.docId,
-        title: p.title ?? "",
-        content: p.content ?? "",
-        tags: Array.isArray(p.tags) ? p.tags : [],
-        coverUrl: p.coverUrl || p.imageURL || null,
-        createdAt: p.createdAt ?? null,
-      }));
+                setItems(Array.isArray(data) ? data : []);
+            } catch (e) {
+                if (e.name !== "CanceledError" && e.name !== "AbortError") {
+                    console.error(e);
+                    setErr("Unable to load stories. Please try again.");
+                }
+            } finally {
+                setLoading(false);
+            }
+        })();
 
-      setItems(normalized);
-    } catch (e) {
-      if (e.name !== "CanceledError" && e.name !== "AbortError") {
-        setErr(e?.response?.data?.message || e.message || "Load posts failed");
-      }
-    } finally {
-      setLoading(false);
-    }
-  })();
+        return () => ac.abort();
+    }, []);
 
-  return () => ac.abort();
-}, []);
+    const editPost = (id) => {
+        // adjust this route if your edit page uses a different pattern
+        navigate(`/stories/${id}/edit`);
+    };
 
+    const deletePost = async (id) => {
+        const confirmed = window.confirm("Are you sure you want to delete this story?");
+        if (!confirmed) return;
 
-  return (
-    <div className="max-w-3xl mx-auto p-4">
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-bold">All Stories</h1>
-        <Link
-          to="/stories/new"
-          className="px-3 py-2 bg-black text-white rounded-lg"
-        >
-          New Story
-        </Link>
-      </div>
+        try {
+            await API.delete(`/posts/${id}`);
+            setItems((prev) => prev.filter((p) => p.id !== id));
+        } catch (e) {
+            console.error(e);
+            setErr("Unable to delete this story. Please try again.");
+        }
+    };
 
-      {loading && <p>Loading...</p>}
-      {!loading && err && <p className="text-red-600">{err}</p>}
-      {!loading && !err && items.length === 0 && (
-        <p className="text-gray-500">No posts yet.</p>
-      )}
+    const formatUpdated = (post) => {
+        const source = post.updatedAt || post.createdAt;
+        if (!source) return null;
 
-      {!loading && !err && items.length > 0 && (
-        <ul className="space-y-4">
-          {items.map((p) => {
-            const key = p.id || p.slug;
-            return (
-              <li key={key} className="border rounded-lg hover:shadow-sm">
-                <Link to={`/stories/${key}`} className="block p-3">
-                  
-                  {p.coverUrl && (
-                    <img
-                      src={p.coverUrl}
-                      alt=""
-                      className="mb-3 w-full max-h-56 object-cover rounded-md"
-                      loading="lazy"
-                      referrerPolicy="no-referrer"
-                    />
-                  )}
+        const date = typeof source === "object" && source._seconds ? new Date(source._seconds * 1000) : new Date(source);
 
-                  <h3 className="font-semibold text-lg">{p.title}</h3>
-                  <p className="mt-1 text-sm text-gray-600 line-clamp-2">
-                    {p.content}
-                  </p>
+        return `Updated ${date.toLocaleDateString()}`;
+    };
 
-                  {Array.isArray(p.tags) && p.tags.length > 0 && (
-                    <div className="mt-2 flex flex-wrap gap-2 text-xs text-gray-500">
-                      {p.tags.map((t) => (
-                        <span
-                          key={t}
-                          className="px-2 py-0.5 rounded-full bg-gray-100"
-                        >
-                          #{t}
-                        </span>
-                      ))}
+    const getContent = (post) => {
+        // try common field names, fall back gracefully
+        return post.content || post.body || "";
+    };
+
+    return (
+        <section className="space-y-6">
+            {/* Page header */}
+            <header>
+                <h1 className="text-3xl font-bold text-gray-800">My Stories</h1>
+                <p className="mt-1 text-sm text-gray-500">All of your stories, shown in full.</p>
+            </header>
+
+            <div className="space-y-4">
+                {loading && <div className="rounded-lg border border-gray-200 bg-white p-6 text-sm text-gray-500">Loading your stories…</div>}
+
+                {err && !loading && <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">{err}</div>}
+
+                {!loading && !err && items.length === 0 && (
+                    <div className="rounded-lg border border-dashed border-gray-300 bg-white p-6 text-sm text-gray-500">
+                        You haven&apos;t published any stories yet.
                     </div>
-                  )}
+                )}
 
-                 
-                  {p.createdAt && (
-                    <p className="mt-2 text-xs text-gray-400">
-                      {new Date(
-                        p.createdAt._seconds
-                          ? p.createdAt._seconds * 1000
-                          : p.createdAt
-                      ).toLocaleString()}
-                    </p>
-                  )}
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-      )}
-    </div>
-  );
+                {!loading &&
+                    !err &&
+                    items.length > 0 &&
+                    items.map((p) => (
+                        <article key={p.id} className="space-y-3 rounded-lg border border-gray-200 bg-white p-5">
+                            {/* Title + updated time */}
+                            <header className="space-y-1">
+                                <h2 className="text-xl font-semibold text-gray-800">{p.title || "Untitled story"}</h2>
+                                {formatUpdated(p) && <p className="text-xs text-gray-500">{formatUpdated(p)}</p>}
+                            </header>
+
+                            {/* Full image (original look) */}
+                            {p.coverUrl && (
+                                <div className="overflow-hidden rounded-lg">
+                                    <img src={p.coverUrl} alt={p.title || "Story cover"} className="w-full max-h-[420px] object-cover" />
+                                </div>
+                            )}
+
+                            {/* Full content */}
+                            {getContent(p) && <div className="text-sm text-gray-700 whitespace-pre-wrap">{getContent(p)}</div>}
+
+                            {/* Footer: actions */}
+                            <footer className="flex justify-end gap-2 pt-3 border-t border-gray-100">
+                                <button
+                                    type="button"
+                                    onClick={() => editPost(p.id)}
+                                    className="inline-flex items-center rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
+                                >
+                                    Edit
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => deletePost(p.id)}
+                                    className="inline-flex items-center rounded-md border border-red-200 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-50"
+                                >
+                                    Delete
+                                </button>
+                            </footer>
+                        </article>
+                    ))}
+            </div>
+        </section>
+    );
 }
