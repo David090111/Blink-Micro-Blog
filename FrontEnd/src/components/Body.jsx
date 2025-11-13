@@ -1,19 +1,29 @@
 import React from 'react'
-import { useState } from 'react';
 import { Routes, Route } from "react-router-dom";
 import Sidebar from "./Sidebar";
 
 import Home from "../pages/Home";
-import Favorites from "../pages/Favorites";
+// import Favorites from "../pages/Favorites";
+import CreatePost from "../pages/CreatePost";
 import Stories from "../pages/Stories";
 import StoryDetail from "../pages/StoryDetail";
 import Profile from "../pages/Profile";
 import About from "../pages/About";
 import Resources from "../pages/Resources";
 
+// import AuthProvider, { useAuth } from "../context/AuthProvider";
 
-export const Body = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+import { useAuth } from "../context/AuthProvider";
+
+// function RequireAuth({ children }) {
+//   const { user } = useAuth();
+//   if (!user) return <Navigate to="/login" replace />;
+//   return children;
+// }
+
+export const Body = ({sFlag, sClose}) => {
+  // const [sidebarOpen, setSidebarOpen] = useState(true);
+  const { user } = useAuth();
 
   return (
     // <div className='grid grid-cols-16 text-center pt-4 gap-4 px-4'>
@@ -42,20 +52,24 @@ export const Body = () => {
     //     3
     //   </div>
     // </div>
-    <div className="mx-auto max-w-6xl px-6">
-      <div className="flex gap-10">
-        <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-        <main className="flex-1 py-10">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/favorites" element={<Favorites />} />
-            <Route path="/stories" element={<Stories />} />
-            <Route path="/stories/:id" element={<StoryDetail />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/resources" element={<Resources />} />
-          </Routes>
-        </main>
+    <div>
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="flex gap-10">
+          {user ? <Sidebar open={sFlag} onClose={sClose} /> : null}
+          
+          <main className="flex-1 py-10">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              {/* <Route path="/favorites" element={<Favorites />} /> */}
+              <Route path="/stories/new" element={<CreatePost />} />
+              <Route path="/stories" element={<Stories />} />
+              <Route path="/stories/:id" element={<StoryDetail />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/resources" element={<Resources />} />
+            </Routes>
+          </main>
+        </div>
       </div>
     </div>
   )

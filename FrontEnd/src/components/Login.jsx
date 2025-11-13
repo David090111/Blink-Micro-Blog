@@ -1,44 +1,73 @@
 import React from 'react'
 import { useState } from 'react'
+import { useAuth } from "../context/AuthProvider";
+import { Link, useNavigate } from "react-router-dom";
 
 export const Login = ({onClose, onSwitch}) => {
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
+  // const [error, setError] = useState("");
+
+  // const handleLogin = async (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+  //   setError("");
+
+  //   const data = new FormData(e.currentTarget);
+  //   const email = data.get("email");
+  //   const password = data.get("password");
+
+  //   try {
+  //     const res = await fetch("http://localhost:5000/api/auth/login", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ email, password }),
+  //     });
+
+  //     const result = await res.json();
+
+  //     if (!res.ok) {
+  //       throw new Error(result.message || "Login failed");
+  //     }
+
+  //     alert("Login success!");
+  //     console.log("Token:", result.accessToken);
+
+  //     localStorage.setItem("accessToken", result.accessToken);
+  //     localStorage.setItem("refreshToken", result.refreshToken);
+
+  //     onClose();
+  //   } catch (err) {
+  //     setError(err.message);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  const { login, loginWithGoogle, loading } = useAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setError("");
-
-    const data = new FormData(e.currentTarget);
-    const email = data.get("email");
-    const password = data.get("password");
-
-    try {
-      const res = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const result = await res.json();
-
-      if (!res.ok) {
-        throw new Error(result.message || "Login failed");
-      }
-
-      alert("Login success!");
-      console.log("Token:", result.accessToken);
-
-      localStorage.setItem("accessToken", result.accessToken);
-      localStorage.setItem("refreshToken", result.refreshToken);
-
+    const res = await login(email, password);
+    if (res.ok) {
+      navigate("/");
       onClose();
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
     }
+    else setError(res.message);
+  };
+
+  const handleGoogle = async () => {
+    setError("");
+    const res = await loginWithGoogle();
+    if (res.ok) {
+      navigate("/");
+      onClose();
+    }
+    else setError(res.message);
   };
 
   return (
@@ -53,20 +82,28 @@ export const Login = ({onClose, onSwitch}) => {
           </button>
           <h2 className="text-xl font-semibold mb-4">Welcome!</h2>
 
+          {error && (
+            <div className="mb-4 rounded-md bg-red-50 p-3 text-red-700 text-sm">
+              {error}
+            </div>
+          )}
           <form
-            onSubmit={(e) => {
-              handleLogin();
+            // onSubmit={(e) => {
+            //   handleLogin();
               // e.preventDefault();
               // const data = new FormData(e.currentTarget);
               // alert(`Logging in: ${data.get("email")}`);
               // setShowLogin(false);
-            }}
+            // }}
+            onSubmit={handleSubmit}
           >
             <input
               type="email"
               name="email"
               placeholder="Email"
               required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="border w-full mb-3 px-3 py-2 rounded-md"
             />
             <input
@@ -74,18 +111,29 @@ export const Login = ({onClose, onSwitch}) => {
               name="password"
               placeholder="Password"
               required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               className="border w-full mb-4 px-3 py-2 rounded-md"
             />
             <button
               type="submit"
+              disabled={loading}
               className="bg-gray-900 text-white px-4 p-2 mt-2 w-full rounded-md hover:opacity-90"
             >
               Sign in
             </button>
           </form>
-
+          <div className="mt-6 flex items-center gap-3">
+            <div className="h-px bg-gray-200 flex-1"></div>
+            <span className="text-xs text-gray-500">OR</span>
+            <div className="h-px bg-gray-200 flex-1"></div>
+          </div>
           <div className='flex justify-center'>
-            <button className='flex border border-gray-800 rounded-4xl py-2 px-4 mt-6 items-center'>
+            <button 
+              className='flex border border-gray-800 rounded-4xl py-2 px-4 mt-4 items-center'
+              onClick={handleGoogle}
+              disabled={loading}
+            >
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" className="w-5 h-5">
                 <path
                   fill="#EA4335"
