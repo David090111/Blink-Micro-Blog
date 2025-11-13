@@ -5,8 +5,10 @@ import Sidebar from "./Sidebar";
 import Home from "../pages/Home";
 // import Favorites from "../pages/Favorites";
 import CreatePost from "../pages/CreatePost";
-import Stories from "../pages/Stories";
-import StoryDetail from "../pages/StoryDetail";
+// import Stories from "../pages/Stories";
+import Posts from "../pages/Posts";
+// import StoryDetail from "../pages/StoryDetail";
+import PostDetail from "../pages/PostDetail";
 import Profile from "../pages/Profile";
 import About from "../pages/About";
 import Resources from "../pages/Resources";
@@ -62,8 +64,8 @@ export const Body = ({sFlag, sClose}) => {
               <Route path="/" element={<Home />} />
               {/* <Route path="/favorites" element={<Favorites />} /> */}
               <Route path="/stories/new" element={<CreatePost />} />
-              <Route path="/stories" element={<Stories />} />
-              <Route path="/stories/:id" element={<StoryDetail />} />
+              <Route path="/stories" element={<Posts />} />
+              <Route path="/stories/:id" element={<PostDetail />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/about" element={<About />} />
               <Route path="/resources" element={<Resources />} />

@@ -65,7 +65,7 @@ export function ensureDemoSeed() {
     if (Object.keys(all).length > 0) return;
 
     const fiveDaysAgo = new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString();
-
+const now = new Date().toISOString();
     const demo = {
         id: uuid(),
         title: "Welcome to Blink Micro Blog",

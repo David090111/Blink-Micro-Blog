@@ -6,4 +6,15 @@ import tailwindcss from '@tailwindcss/vite'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(),tailwindcss()],
+//////// Proxy setup
+  server: {
+    proxy: {
+      "/api": {
+        target: "https://blog-app-geminiai.onrender.com",
+        changeOrigin: true,
+        secure: true,
+      },
+    },
+  },
+////////
 })
