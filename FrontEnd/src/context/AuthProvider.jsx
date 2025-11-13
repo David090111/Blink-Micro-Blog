@@ -1,83 +1,109 @@
-import { createContext, useContext, useState } from "react";
-import { auth } from "../firebase";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  GoogleAuthProvider,
-  signInWithPopup,
-  updateProfile,
-  onAuthStateChanged,
-} from "firebase/auth";
+// src/context/AuthProvider.jsx
+import { createContext, useContext, useState, useEffect } from "react";
+import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, updateProfile, signInWithPopup } from "firebase/auth";
+
+import { auth, provider } from "../firebase";
 
 const AuthCtx = createContext(null);
+
 export const useAuth = () => useContext(AuthCtx);
 
-function parseFbError(err) {
-  const code = err?.code || err?.message || "";
-  if (code.includes("auth/email-already-in-use")) return "Email already exists.";
-  if (code.includes("auth/weak-password")) return "Password must be ≥ 6 characters.";
-  if (code.includes("auth/invalid-email")) return "Invalid email.";
-  if (code.includes("auth/operation-not-allowed")) return "Provider not enabled.";
-  return code || "Registration failed.";
-}
+export function AuthProvider({ children }) {
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-export default function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(false);
+    // ================================================
+    // 🔄 Listen to auth state (SAFE even when auth=null)
+    // ================================================
+    useEffect(() => {
+        if (!auth) {
+            console.warn("[AuthProvider] Firebase auth disabled.");
+            setUser(null);
+            setLoading(false);
+            return;
+        }
 
-  // theo dõi phiên
-  onAuthStateChanged(auth, (u) => setUser(u));
+        const unsub = onAuthStateChanged(auth, (fbUser) => {
+            setUser(fbUser);
+            setLoading(false);
+        });
 
-  const register = async (name, email, password) => {
-    if (loading) return { ok: false, message: "Processing..." };
-    setLoading(true);
-    try {
-      const cred = await createUserWithEmailAndPassword(auth, email, password); // ✅ 1 lần duy nhất
-      if (name) {
-        await updateProfile(cred.user, { displayName: name });
-      }
-      // nếu cần gọi backend tạo hồ sơ/mint JWT thì gọi tiếp ở đây (1 lần)
-      return { ok: true, user: cred.user };
-    } catch (err) {
-      console.error("register error:", err);
-      return { ok: false, message: parseFbError(err) };
-    } finally {
-      setLoading(false);
-    }
-  };
+        return () => unsub();
+    }, []);
 
-  const login = async (email, password) => {
-    if (loading) return { ok: false, message: "Processing..." };
-    setLoading(true);
-    try {
-      const cred = await signInWithEmailAndPassword(auth, email, password);
-      return { ok: true, user: cred.user };
-    } catch (err) {
-      return { ok: false, message: "Wrong email or password." };
-    } finally {
-      setLoading(false);
-    }
-  };
+    // ========================================================
+    // 🟢 REGISTER (Safe guard if Firebase is disabled)
+    // ========================================================
+    const register = async (email, password, displayName) => {
+        if (!auth) {
+            return {
+                ok: false,
+                message: "Authentication is disabled (missing Firebase config).",
+            };
+        }
 
-  const loginWithGoogle = async () => {
-    if (loading) return { ok: false, message: "Processing..." };
-    setLoading(true);
-    try {
-      const prov = new GoogleAuthProvider();
-      const cred = await signInWithPopup(auth, prov);
-      return { ok: true, user: cred.user };
-    } catch (err) {
-      return { ok: false, message: "Google sign-in failed." };
-    } finally {
-      setLoading(false);
-    }
-  };
+        try {
+            const res = await createUserWithEmailAndPassword(auth, email, password);
 
-  return (
-    <AuthCtx.Provider
-      value={{ user, loading, register, login, loginWithGoogle }}
-    >
-      {children}
-    </AuthCtx.Provider>
-  );
+            if (displayName) {
+                await updateProfile(res.user, { displayName });
+            }
+
+            return { ok: true, user: res.user };
+        } catch (err) {
+            return { ok: false, message: err.message };
+        }
+    };
+
+    // ========================================================
+    // 🔵 LOGIN (Safe guard)
+    // ========================================================
+    const login = async (email, password) => {
+        if (!auth) {
+            return {
+                ok: false,
+                message: "Authentication is disabled (missing Firebase config).",
+            };
+        }
+
+        try {
+            const res = await signInWithEmailAndPassword(auth, email, password);
+            return { ok: true, user: res.user };
+        } catch (err) {
+            return { ok: false, message: err.message };
+        }
+    };
+
+    // ========================================================
+    // 🟣 LOGIN WITH GOOGLE (Safe guard)
+    // ========================================================
+    const loginWithGoogle = async () => {
+        if (!auth || !provider) {
+            return {
+                ok: false,
+                message: "Google login is disabled (missing Firebase config).",
+            };
+        }
+
+        try {
+            const res = await signInWithPopup(auth, provider);
+            return { ok: true, user: res.user };
+        } catch (err) {
+            return { ok: false, message: err.message };
+        }
+    };
+
+    return (
+        <AuthCtx.Provider
+            value={{
+                user,
+                loading,
+                register,
+                login,
+                loginWithGoogle,
+            }}
+        >
+            {children}
+        </AuthCtx.Provider>
+    );
 }

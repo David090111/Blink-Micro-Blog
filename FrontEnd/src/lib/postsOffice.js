@@ -1,4 +1,9 @@
-const LS_KEY = "blink_posts_v1";
+const LS_KEY = "blink_posts_v2";
+
+// UUID helper
+function uuid() {
+    return crypto.randomUUID();
+}
 
 function readAll() {
     try {
@@ -12,47 +17,64 @@ function writeAll(map) {
     localStorage.setItem(LS_KEY, JSON.stringify(map));
 }
 
-// Create or update a post (idempotent by slug)
+// Save or update a post (ID-based)
 export function savePost(post) {
     const all = readAll();
-    all[post.slug] = post;
+
+    // If new post, assign an ID
+    if (!post.id) {
+        post.id = uuid();
+    }
+
+    post.updatedAt = new Date().toISOString();
+
+    if (!post.createdAt) {
+        post.createdAt = post.updatedAt;
+    }
+
+    all[post.id] = post;
     writeAll(all);
     return post;
 }
 
-export function getPost(slug) {
+// Read single post by ID
+export function getPost(id) {
     const all = readAll();
-    return all[slug] || null;
+    return all[id] || null;
 }
 
+// Sort latest to oldest
 export function getAllPostsNewestFirst() {
-    const all = Object.values(readAll());
-    return all.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+    return Object.values(readAll()).sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
 }
 
-export function deletePost(slug) {
+// Delete post by ID
+export function deletePost(id) {
     const all = readAll();
-    if (all[slug]) {
-        delete all[slug];
+    if (all[id]) {
+        delete all[id];
         writeAll(all);
         return true;
     }
     return false;
 }
 
+// Create a demo post only if DB is empty
 export function ensureDemoSeed() {
     const all = readAll();
     if (Object.keys(all).length > 0) return;
 
-    const now = new Date().toISOString();
+    const fiveDaysAgo = new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString();
+
     const demo = {
-        slug: "welcome-to-blink",
+        id: uuid(),
         title: "Welcome to Blink Micro Blog",
-        content: "This is a demo post seeded locally.\n\nTry editing me on the right, or create a new post.",
+        content: "This is a demo post stored locally.\n\nTry creating a new story from the sidebar!",
         tags: ["demo", "hello"],
         coverUrl: "https://images.unsplash.com/photo-1496307042754-b4aa456c4a2d?q=80&w=1600&auto=format&fit=crop",
         createdAt: now,
         updatedAt: now,
     };
+
     savePost(demo);
 }
