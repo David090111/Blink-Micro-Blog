@@ -1,6 +1,13 @@
 // src/context/AuthProvider.jsx
 import { createContext, useContext, useState, useEffect } from "react";
-import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, updateProfile, signInWithPopup } from "firebase/auth";
+import {
+    createUserWithEmailAndPassword,
+    onAuthStateChanged,
+    signInWithEmailAndPassword,
+    updateProfile,
+    signInWithPopup,
+    signOut,
+} from "firebase/auth";
 
 import { auth, provider } from "../firebase";
 
@@ -93,6 +100,25 @@ export function AuthProvider({ children }) {
         }
     };
 
+    // ========================================================
+    // 🔴 LOGOUT (Safe guard) <-- New function added
+    // ========================================================
+    const logout = async () => {
+        if (!auth) {
+            return {
+                ok: false,
+                message: "Authentication is disabled (missing Firebase config).",
+            };
+        }
+
+        try {
+            await signOut(auth);
+            return { ok: true };
+        } catch (err) {
+            return { ok: false, message: err.message };
+        }
+    };
+
     return (
         <AuthCtx.Provider
             value={{
@@ -101,6 +127,7 @@ export function AuthProvider({ children }) {
                 register,
                 login,
                 loginWithGoogle,
+                logout, // <-- Exported logout
             }}
         >
             {children}

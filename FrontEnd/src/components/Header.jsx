@@ -5,11 +5,53 @@ import { Register } from "./Register.jsx";
 import { useAuth } from "../context/AuthProvider";
 import { Link, useNavigate } from "react-router-dom";
 
+const LogoutConfirmationModal = ({ onConfirm, onCancel }) => {
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+            <div className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-sm transform transition-all duration-300">
+                <h3 className="text-xl font-bold text-gray-800 mb-3">Confirm Logout</h3>
+                <p className="text-gray-600 mb-6">Are you sure you want to sign out?</p>
+                <div className="flex justify-end space-x-3">
+                    <button
+                        onClick={onCancel}
+                        className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition duration-150"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        onClick={onConfirm}
+                        className="px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition duration-150"
+                    >
+                        Yes, Sign Out
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+
 export const Header = ({ sOpen }) => {
     const [showLoginRegister, setShowLoginRegister] = useState(false);
     const [switchPage, setSwitchPage] = useState(true);
-    const { user } = useAuth();
+    const [showConfirmModal, setShowConfirmModal] = useState(false); 
+    
+    const { user, logout } = useAuth();
     const navigate = useNavigate();
+
+    const handleConfirmLogout = async () => {
+        setShowConfirmModal(false);
+        const { ok, message } = await logout();
+        if (ok) {
+            navigate("/");
+        } else {
+            console.error("Logout failed:", message);
+        }
+    };
+
+    const handleLogoutClick = () => {
+        setShowConfirmModal(true);
+    };
 
     return (
         <header>
@@ -30,6 +72,7 @@ export const Header = ({ sOpen }) => {
                     <img src={logo} alt="Logo" className="ml-5 inline-block w-8 h-8" />
                     <p className="ml-0.5 text-3xl font-bold text-slate-800 whitespace-nowrop hidden sm:block"> link Micro Blog</p>
                 </div>
+                {/* Search Bar Placeholder */}
                 {/* <div className='flex bg-gray-200 rounded-4xl p-1 ml-4'>
           <div className='pl-2 pr-4'>
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M4.092 11.06a6.95 6.95 0 1 1 13.9 0 6.95 6.95 0 0 1-13.9 0m6.95-8.05a8.05 8.05 0 1 0 5.13 14.26l3.75 3.75a.56.56 0 1 0 .79-.79l-3.73-3.73A8.05 8.05 0 0 0 11.042 3z" clip-rule="evenodd"></path></svg>
@@ -66,13 +109,14 @@ export const Header = ({ sOpen }) => {
                             <p className="hidden sm:block">Write</p>
                         </button>
                     ) : null}
-                    {/* <button>
-            <div className='mx-2'>
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" d="M15 18.5a3 3 0 1 1-6 0"></path><path stroke="currentColor" stroke-linejoin="round" d="M5.5 10.532V9a6.5 6.5 0 0 1 13 0v1.532c0 1.42.564 2.782 1.568 3.786l.032.032c.256.256.4.604.4.966v2.934a.25.25 0 0 1-.25.25H3.75a.25.25 0 0 1-.25-.25v-2.934c0-.363.144-.71.4-.966l.032-.032A5.35 5.35 0 0 0 5.5 10.532Z"></path></svg>
-            </div>
-          </button> */}
+                    
                     {user ? (
-                        <button className="mx-2 bg-gray-700 rounded-md p-2 w-24 text-white">Logout</button>
+                        <button
+                            className="mx-2 bg-gray-700 rounded-md p-2 w-24 text-white"
+                            onClick={handleLogoutClick}
+                        >
+                            Logout
+                        </button>
                     ) : (
                         <button
                             className="mx-2 bg-gray-800 rounded-md p-2 w-24 text-white"
@@ -92,6 +136,13 @@ export const Header = ({ sOpen }) => {
                 ) : (
                     <Register onClose={() => setShowLoginRegister(false)} onSwitch={() => setSwitchPage(true)} />
                 ))}
+
+            {showConfirmModal && (
+                <LogoutConfirmationModal 
+                    onConfirm={handleConfirmLogout} 
+                    onCancel={() => setShowConfirmModal(false)}
+                />
+            )}
         </header>
     );
 };
