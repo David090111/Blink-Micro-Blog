@@ -8,6 +8,7 @@ export default function EditPost() {
   const nav = useNavigate();
   const [form, setForm] = useState({ title: "", content: "", tags: "" });
   const [cover, setCover] = useState({ imageURL: "", public_id: "" });
+  const [coverPublicId, setCoverPublicId] = useState(null);
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
@@ -42,7 +43,7 @@ export default function EditPost() {
         imageURL: cover.imageURL,
         public_id: cover.public_id,
       });
-      nav(`/posts/${id}`);
+      nav(`/stories`);
     } catch (err) {
       alert(err?.response?.data?.message || err.message);
     } finally {
@@ -73,7 +74,7 @@ export default function EditPost() {
           onChange={onChange}
         />
 
-        <CoverUploader value={cover} onChange={setCover} />
+        <CoverUploader value={cover} onChange={setCover} onMeta={({ publicId }) => setCoverPublicId(publicId)} />
 
         <button
           className="px-4 py-2 bg-black text-white rounded-lg"

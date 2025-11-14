@@ -14,6 +14,7 @@ import About from "../pages/About";
 import Resources from "../pages/Resources";
 import Terms from "../pages/Terms";
 import Privacy from "../pages/Privacy";
+import EditPost from "../pages/EditPost";
 
 // import AuthProvider, { useAuth } from "../context/AuthProvider";
 
@@ -67,6 +68,7 @@ export const Body = ({ sFlag, sClose }) => {
                         <Route path="/stories/new" element={<CreatePost />} />
                         <Route path="/stories" element={<Posts />} />
                         <Route path="/stories/:id" element={<PostDetail />} />
+                        <Route path="/stories/:id/edit" element={<EditPost />} />
                         <Route path="/profile" element={<Profile />} />
                         <Route path="/about" element={<About />} />
                         <Route path="/resources" element={<Resources />} />

@@ -89,7 +89,8 @@ export default function CreatePost() {
       };
 
       const { data } = await API.post("/posts", payload);
-      nav(`/stories/${data.id}`);
+      // nav(`/stories/${data.id}`);
+      nav(`/stories`);
     } catch (err) {
       alert(err?.response?.data?.message || err.message);
     } finally {

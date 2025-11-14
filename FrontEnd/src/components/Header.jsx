@@ -13,7 +13,7 @@ export const Header = ({ sOpen }) => {
 
     return (
         <header>
-            <div className="flex gap-2 items-center h-16 px-4 my-4">
+            <div className="flex gap-2 items-center h-16 px-4 my-4 bg-">
                 {user ? (
                     <div className="ml-2 block sm:hidden">
                         <button onClick={sOpen}>
@@ -26,7 +26,7 @@ export const Header = ({ sOpen }) => {
                         </button>
                     </div>
                 ) : null}
-                <div className=" font-bold text-3xl flex items-center shrink-0">
+                <div className=" font-bold text-3xl flex items-center shrink-0" onClick={() => navigate("/")}>
                     <img src={logo} alt="Logo" className="ml-5 inline-block w-8 h-8" />
                     <p className="ml-0.5 text-3xl font-bold text-slate-800 whitespace-nowrop hidden sm:block"> link Micro Blog</p>
                 </div>
@@ -37,7 +37,19 @@ export const Header = ({ sOpen }) => {
           <input className='border-hidden outline-0' placeholder='Search' type="text" />
         </div> */}
                 <div className="ml-auto flex items-center">
-                    {user ? (
+                        <button className="flex mx-2" onClick={() => navigate("/stories")}>
+                            <div>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                    <path
+                                        stroke="currentColor"
+                                        d="M4.75 21.5h14.5a.25.25 0 0 0 .25-.25V2.75a.25.25 0 0 0-.25-.25H4.75a.25.25 0 0 0-.25.25v18.5c0 .138.112.25.25.25Z"
+                                    ></path>
+                                    <path stroke="currentColor" stroke-linecap="round" d="M8 8.5h8M8 15.5h5M8 12h8"></path>
+                                </svg>
+                            </div>
+                            <p className="hidden sm:block">Stories</p>
+                        </button>
+                        {user ? (
                         <button className="flex mx-2" onClick={() => navigate("/stories/new")}>
                             <div>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
