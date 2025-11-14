@@ -41,7 +41,7 @@ export function AuthProvider({ children }) {
     // ========================================================
     // 🟢 REGISTER (Safe guard if Firebase is disabled)
     // ========================================================
-    const register = async (email, password, displayName) => {
+    const register = async (name, email, password) => {
         if (!auth) {
             return {
                 ok: false,
@@ -52,8 +52,8 @@ export function AuthProvider({ children }) {
         try {
             const res = await createUserWithEmailAndPassword(auth, email, password);
 
-            if (displayName) {
-                await updateProfile(res.user, { displayName });
+            if (name) {
+                await updateProfile(res.user, { name });
             }
 
             return { ok: true, user: res.user };

@@ -45,11 +45,13 @@ export default function Posts() {
         if (!confirmed) return;
 
         try {
+            console.log("Deleting post id:", id);
+            console.log("Current items:", items);
             await API.delete(`/posts/${id}`);
             setItems((prev) => prev.filter((p) => p.id !== id));
         } catch (e) {
             console.error(e);
-            setErr("Unable to delete this story. Please try again.");
+            alert("Unable to delete. You are not own this story.");
         }
     };
 
@@ -99,13 +101,14 @@ export default function Posts() {
 
                             {/* Full image (original look) */}
                             {p.coverUrl && (
-                                <div className="overflow-hidden rounded-lg">
+                                <div className="overflow-hidden rounded-lg" onClick={() => navigate(`/stories/${p.id}`)}>
                                     <img src={p.coverUrl} alt={p.title || "Story cover"} className="w-full max-h-[420px] object-cover" />
                                 </div>
                             )}
+                            
 
                             {/* Full content */}
-                            {getContent(p) && <div className="text-sm text-gray-700 whitespace-pre-wrap">{getContent(p)}</div>}
+                            {getContent(p) && <div className="text-sm text-gray-700 whitespace-pre-wrap" onClick={() => navigate(`/stories/${p.id}`)}>{getContent(p)}</div>}
 
                             {/* Footer: actions */}
                             <footer className="flex justify-end gap-2 pt-3 border-t border-gray-100">

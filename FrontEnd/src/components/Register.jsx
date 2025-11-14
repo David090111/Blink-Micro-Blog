@@ -62,7 +62,7 @@ export const Register = ({onClose, onSwitch}) => {
           >
             <input
               type="name"
-              name="username"
+              name="name"
               placeholder="Usermane"
               required
               value={name}

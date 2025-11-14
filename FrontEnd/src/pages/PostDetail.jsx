@@ -14,6 +14,7 @@ export default function PostDetail() {
     setBusy(true);
     try {
       const { data } = await API.get(`/posts/${id}`);
+      // console.log("Loaded post data:", data);
       setPost(data);
     } finally {
       setBusy(false);
@@ -50,9 +51,9 @@ export default function PostDetail() {
         </div>
       </div>
 
-      {post.imageURL ? (
+      {post.coverUrl ? (
         <img
-          src={post.imageURL}
+          src={post.coverUrl}
           alt="cover"
           className="w-full rounded border mb-4"
         />
