@@ -71,7 +71,7 @@ export default function Posts() {
         <section className="space-y-6">
             {/* Page header */}
             <header>
-                <h1 className="text-3xl font-bold text-gray-800">My Stories</h1>
+                <h1 className="text-3xl font-bold text-gray-800">Stories</h1>
                 <p className="mt-1 text-sm text-gray-500">All of your stories, shown in full.</p>
             </header>
 
