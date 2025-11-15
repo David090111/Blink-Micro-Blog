@@ -15,6 +15,7 @@ import Resources from "../pages/Resources";
 import Terms from "../pages/Terms";
 import Privacy from "../pages/Privacy";
 import EditPost from "../pages/EditPost";
+import MyPosts from "../pages/MyPosts";
 
 // import AuthProvider, { useAuth } from "../context/AuthProvider";
 
@@ -74,6 +75,7 @@ export const Body = ({ sFlag, sClose }) => {
                         <Route path="/resources" element={<Resources />} />
                         <Route path="/terms" element={<Terms />} />
                         <Route path="/privacy" element={<Privacy />} />
+                        <Route path="/mystories" element={<MyPosts />} />
                     </Routes>
                 </div>
             </main>

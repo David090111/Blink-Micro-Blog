@@ -40,7 +40,7 @@ export default function EditPost() {
           .split(",")
           .map((s) => s.trim())
           .filter(Boolean),
-        imageURL: cover.imageURL,
+        coverURL: cover.imageURL,
         public_id: cover.public_id,
       });
       nav(`/stories`);
@@ -73,7 +73,7 @@ export default function EditPost() {
           value={form.tags}
           onChange={onChange}
         />
-
+{console.log("Cover in EditPost:", cover)}
         <CoverUploader value={cover} onChange={setCover} onMeta={({ publicId }) => setCoverPublicId(publicId)} />
 
         <button

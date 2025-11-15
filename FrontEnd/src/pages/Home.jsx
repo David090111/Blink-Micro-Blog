@@ -2,10 +2,13 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ensureDemoSeed, getAllPostsNewestFirst } from "../lib/postsOffice";
 import home from "../assets/homepicture.jpg";
+import { useAuth } from "../context/AuthProvider";
+
 
 export default function Home() {
     const navigate = useNavigate();
     const [posts, setPosts] = useState([]);
+    const { user } = useAuth();
 
     useEffect(() => {
         ensureDemoSeed();
@@ -18,9 +21,17 @@ export default function Home() {
 
     return (
         <section className="space-y-6">
+            {/* {console.log("User in Home:", user)} */}
             {/* Page header */}
             <header>
-                <h1 className="text-3xl font-bold text-gray-800">Welcome to save your story!</h1>
+                <h1 className="text-3xl font-bold text-gray-800">
+                    {user ? (
+                        <>Welcome <span className="text-red-500">{user.displayName}</span> ! 👋</>
+                    ) : (
+                        <>Welcome to save your story!</>
+                    )}
+                </h1>
+                
                 {/* <p className="mt-1 text-sm text-gray-500">Your latest stories at a glance.</p> */}
             </header>
 

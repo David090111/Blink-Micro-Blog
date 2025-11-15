@@ -2,14 +2,20 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../api";
+import { useAuth } from "../context/AuthProvider";
 
-export default function Posts() {
+export default function MyPosts() {
     const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(true);
     const [err, setErr] = useState("");
+    const [myItems, setMyItems] = useState("");
     const navigate = useNavigate();
+    const { user, loading: authLoading } = useAuth();
 
+    
     useEffect(() => {
+        if (authLoading) return;
+        if (!user) return;
         const ac = new AbortController();
 
         (async () => {
@@ -21,7 +27,8 @@ export default function Posts() {
                     signal: ac.signal,
                 });
 
-                setItems(Array.isArray(data) ? data : []);
+                // setItems(Array.isArray(data) ? data : []);
+                setItems(Array.isArray(data) ? data.filter(item => item.authorId === user.uid) : []);
             } catch (e) {
                 if (e.name !== "CanceledError" && e.name !== "AbortError") {
                     console.error(e);
@@ -33,7 +40,7 @@ export default function Posts() {
         })();
 
         return () => ac.abort();
-    }, []);
+    }, [user, authLoading]);
 
     const editPost = (id) => {
         // adjust this route if your edit page uses a different pattern
@@ -45,7 +52,7 @@ export default function Posts() {
         if (!confirmed) return;
 
         try {
-            console.log("Current items:", items);
+            // console.log("Current items:", items);
             await API.delete(`/posts/${id}`);
             setItems((prev) => prev.filter((p) => p.id !== id));
         } catch (e) {
@@ -70,9 +77,14 @@ export default function Posts() {
 
     return (
         <section className="space-y-6">
+            {/* {console.log("User in MyPosts:", user)}
+            {console.log("Items:", items)} */}
+            {/* {setMyItems(items.filter((item) => item.authorId === user.uid))} */}
+            {/* {console.log("Filtered my items:", myItems)} */}
+            {/* {console.log("User in Home:", user)} */}
             {/* Page header */}
             <header>
-                <h1 className="text-3xl font-bold text-gray-800">All Stories</h1>
+                <h1 className="text-3xl font-bold text-gray-800">My Stories</h1>
                 <p className="mt-1 text-sm text-gray-500">All of your stories, shown in full.</p>
             </header>
 
