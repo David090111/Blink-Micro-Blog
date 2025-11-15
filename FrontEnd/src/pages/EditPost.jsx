@@ -7,22 +7,24 @@ export default function EditPost() {
   const { id } = useParams();
   const nav = useNavigate();
   const [form, setForm] = useState({ title: "", content: "", tags: "" });
-  const [cover, setCover] = useState({ imageURL: "", public_id: "" });
+  const [cover, setCover] = useState(null);
+  const [public_id, setPublic_id] = useState(null);
   const [coverPublicId, setCoverPublicId] = useState(null);
   const [busy, setBusy] = useState(false);
+
+  const [items, setitems] = useState(null);
 
   useEffect(() => {
     (async () => {
       const { data } = await API.get(`/posts/${id}`);
+      setitems(data);
       setForm({
         title: data.title || "",
         content: data.content || "",
         tags: (data.tags || []).join(", "),
       });
-      setCover({
-        imageURL: data.imageURL || "",
-        public_id: data.public_id || "",
-      });
+      setCover(data.coverUrl || "");
+      setPublic_id(data.public_id || "");
     })();
   }, [id]);
 
@@ -40,8 +42,8 @@ export default function EditPost() {
           .split(",")
           .map((s) => s.trim())
           .filter(Boolean),
-        coverURL: cover.imageURL,
-        public_id: cover.public_id,
+        coverUrl: cover,
+        public_id: public_id,
       });
       nav(`/stories`);
     } catch (err) {
@@ -73,11 +75,11 @@ export default function EditPost() {
           value={form.tags}
           onChange={onChange}
         />
-{console.log("Cover in EditPost:", cover)}
+{/* {console.log("Cover in EditPost:", cover)} */}
         <CoverUploader value={cover} onChange={setCover} onMeta={({ publicId }) => setCoverPublicId(publicId)} />
 
         <button
-          className="px-4 py-2 bg-black text-white rounded-lg"
+          className="px-4 py-2 bg-black text-white hover:opacity-90 hover:cursor-pointer rounded-lg"
           disabled={busy}
         >
           {busy ? "Saving..." : "Save changes"}

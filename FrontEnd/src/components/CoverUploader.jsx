@@ -82,7 +82,7 @@ export default function CoverUploader({ value, onChange, onMeta }) {
           <button
             type="button"
             onClick={() => onChange(null)}
-            className="mt-2 text-sm text-red-600 hover:underline"
+            className="mt-2 text-sm text-red-600 hover:underline hover:cursor-pointer"
           >
             Remove cover
           </button>

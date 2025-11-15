@@ -39,12 +39,12 @@ export default function PostDetail() {
       <div className="flex items-center justify-between mb-2">
         <h1 className="text-2xl font-bold">{post.title}</h1>
         <div className="flex gap-2">
-          <Link to={`/stories/${id}/edit`} className="px-3 py-1 border rounded">
+          <Link to={`/stories/${id}/edit`} className="px-3 py-1 border rounded hover:bg-gray-50 hover:opacity-90  hover:cursor-pointer">
             Edit
           </Link>
           <button
             onClick={remove}
-            className="px-3 py-1 border rounded text-red-600"
+            className="px-3 py-1 border rounded text-red-600 hover:bg-red-50 hover:opacity-90 hover:cursor-pointer"
           >
             Delete
           </button>

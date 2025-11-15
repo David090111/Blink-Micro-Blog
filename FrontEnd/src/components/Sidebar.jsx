@@ -110,7 +110,7 @@ export default function Sidebar({ open = false, onClose = () => {} }) {
             >
                 <div className="flex items-center justify-between mb-3">
                     <h2 className="text-base font-semibold">Menu</h2>
-                    <button onClick={onClose} className="px-3 py-1 rounded hover:bg-gray-100">
+                    <button onClick={onClose} className="px-3 py-1 rounded hover:bg-gray-100 hover:opacity-90 hover:cursor-pointer">
                         Close
                     </button>
                 </div>

@@ -116,7 +116,7 @@ export default function CreatePost() {
             type="button"
             onClick={() => handleAICall("suggest")}
             disabled={aiLoading !== null}
-            className={`px-3 py-2 text-sm rounded-lg text-white whitespace-nowrap ${
+            className={`px-3 py-2 text-sm rounded-lg text-white whitespace-nowrap hover:opacity-90 hover:cursor-pointer ${
               aiLoading === "suggest" ? "bg-blue-400" : "bg-blue-600"
             }`}
           >
@@ -137,7 +137,7 @@ export default function CreatePost() {
               type="button"
               onClick={() => handleAICall("summarize")}
               disabled={aiLoading !== null || !form.content.trim()}
-              className={`px-3 py-1 text-xs rounded-lg text-white ${
+              className={`px-3 py-1 text-xs rounded-lg text-white hover:opacity-90 hover:cursor-pointer ${
                 aiLoading === "summarize" ? "bg-purple-400" : "bg-purple-600"
               }`}
             >
@@ -147,7 +147,7 @@ export default function CreatePost() {
               type="button"
               onClick={() => handleAICall("rewrite")}
               disabled={aiLoading !== null || !form.content.trim()}
-              className={`px-3 py-1 text-xs rounded-lg text-white ${
+              className={`px-3 py-1 text-xs rounded-lg text-white hover:opacity-90 hover:cursor-pointer ${
                 aiLoading === "rewrite" ? "bg-teal-400" : "bg-teal-600"
               }`}
             >
@@ -174,8 +174,8 @@ export default function CreatePost() {
           disabled={busy || !form.title.trim() || aiLoading !== null} 
           className={`px-4 py-2 rounded-lg text-white ${
             busy || !form.title.trim() || aiLoading !== null
-              ? "bg-gray-400"
-              : "bg-black"
+              ? "bg-gray-400" 
+              : "bg-black hover:cursor-pointer hover:opacity-90"
           }`}
         >
           {busy ? "Saving..." : "Create"}

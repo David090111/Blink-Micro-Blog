@@ -17,7 +17,8 @@ export default function Comments({ postId }) {
         ? `/posts/${postId}/comments?after=${cursor}`
         : `/posts/${postId}/comments`;
       const { data } = await API.get(url);
-      setItems((prev) => [...prev, ...data.items]);
+      // setItems((prev) => [...prev, ...data.items]);
+      setItems((prev) => [...data.items]);
       setNextCursor(data.nextCursor);
     } finally {
       setBusy(false);
@@ -83,7 +84,7 @@ export default function Comments({ postId }) {
           className="flex-1 border rounded px-3 py-2"
         />
         <button
-          className="px-3 py-2 bg-black text-white rounded"
+          className="px-3 py-2 bg-black text-white rounded hover:opacity-90 hover:cursor-pointer"
           disabled={saving}
         >
           {saving ? "Posting..." : "Post"}
@@ -102,13 +103,13 @@ export default function Comments({ postId }) {
                 />
                 <div className="flex gap-2">
                   <button
-                    className="px-3 py-1 bg-black text-white rounded"
+                    className="px-3 py-1 bg-black text-white rounded hover:opacity-90 hover:cursor-pointer"
                     onClick={() => saveEdit(c.id)}
                   >
                     Save
                   </button>
                   <button
-                    className="px-3 py-1 border rounded"
+                    className="px-3 py-1 border rounded hover:opacity-90 hover:cursor-pointer"
                     onClick={() => {
                       setEditingId(null);
                       setEditText("");
@@ -122,11 +123,11 @@ export default function Comments({ postId }) {
               <>
                 <p className="whitespace-pre-wrap">{c.content}</p>
                 <div className="text-xs text-gray-500 mt-2 flex gap-3">
-                  <button className="underline" onClick={() => startEdit(c)}>
+                  <button className="underline hover:opacity-90 hover:cursor-pointer" onClick={() => startEdit(c)}>
                     Edit
                   </button>
                   <button
-                    className="underline text-red-600"
+                    className="underline text-red-600 hover:opacity-90 hover:cursor-pointer"
                     onClick={() => remove(c.id)}
                   >
                     Delete
@@ -141,7 +142,7 @@ export default function Comments({ postId }) {
       <div className="mt-3">
         {nextCursor ? (
           <button
-            className="px-3 py-1 border rounded"
+            className="px-3 py-1 border rounded hover:opacity-90 hover:cursor-pointer"
             onClick={() => load(nextCursor)}
             disabled={busy}
           >

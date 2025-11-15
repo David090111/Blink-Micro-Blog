@@ -100,28 +100,28 @@ export default function Posts() {
 
                             {/* Full image (original look) */}
                             {p.coverUrl && (
-                                <div className="overflow-hidden rounded-lg" onClick={() => navigate(`/stories/${p.id}`)}>
+                                <div className="overflow-hidden rounded-lg hover:opacity-90 hover:cursor-pointer" onClick={() => navigate(`/stories/${p.id}`)}>
                                     <img src={p.coverUrl} alt={p.title || "Story cover"} className="w-full max-h-[420px] object-cover" />
                                 </div>
                             )}
                             
 
                             {/* Full content */}
-                            {getContent(p) && <div className="text-sm text-gray-700 whitespace-pre-wrap" onClick={() => navigate(`/stories/${p.id}`)}>{getContent(p)}</div>}
+                            {getContent(p) && <div className="text-sm text-gray-700 whitespace-pre-wrap hover:opacity-90 hover:cursor-pointer" onClick={() => navigate(`/stories/${p.id}`)}>{getContent(p)}</div>}
 
                             {/* Footer: actions */}
                             <footer className="flex justify-end gap-2 pt-3 border-t border-gray-100">
                                 <button
                                     type="button"
                                     onClick={() => editPost(p.id)}
-                                    className="inline-flex items-center rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
+                                    className="inline-flex items-center rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 hover:opacity-90 hover:cursor-pointer"
                                 >
                                     Edit
                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => {deletePost(p.id); console.log("Deleting post id:", p.authorId);}}
-                                    className="inline-flex items-center rounded-md border border-red-200 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-50"
+                                    className="inline-flex items-center rounded-md border border-red-200 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-50 hover:opacity-90 hover:cursor-pointer"
                                 >
                                     Delete
                                 </button>

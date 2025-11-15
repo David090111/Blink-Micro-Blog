@@ -14,13 +14,13 @@ const LogoutConfirmationModal = ({ onConfirm, onCancel }) => {
                 <div className="flex justify-end space-x-3">
                     <button
                         onClick={onCancel}
-                        className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition duration-150"
+                        className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition duration-150 hover:opacity-90 hover:cursor-pointer"
                     >
                         Cancel
                     </button>
                     <button
                         onClick={onConfirm}
-                        className="px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition duration-150"
+                        className="px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition duration-150 hover:opacity-90 hover:cursor-pointer"
                     >
                         Yes, Sign Out
                     </button>
@@ -58,7 +58,7 @@ export const Header = ({ sOpen }) => {
             <div className="flex gap-2 items-center h-16 px-4 my-4 bg-">
                 {user ? (
                     <div className="ml-2 block sm:hidden">
-                        <button onClick={sOpen}>
+                        <button className=" hover:opacity-90 hover:cursor-pointer" onClick={sOpen}>
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                 <path
                                     fill="currentColor"
@@ -68,7 +68,7 @@ export const Header = ({ sOpen }) => {
                         </button>
                     </div>
                 ) : null}
-                <div className=" font-bold text-3xl flex items-center shrink-0" onClick={() => navigate("/")}>
+                <div className=" font-bold text-3xl flex items-center shrink-0 hover:cursor-pointer" onClick={() => navigate("/")}>
                     <img src={logo} alt="Logo" className="ml-5 inline-block w-8 h-8" />
                     <p className="ml-0.5 text-3xl font-bold text-slate-800 whitespace-nowrop hidden sm:block"> link Micro Blog</p>
                 </div>
@@ -80,7 +80,7 @@ export const Header = ({ sOpen }) => {
           <input className='border-hidden outline-0' placeholder='Search' type="text" />
         </div> */}
                 <div className="ml-auto flex items-center">
-                        <button className="flex mx-2" onClick={() => navigate("/stories")}>
+                        <button className="flex mx-2 hover:opacity-90 hover:cursor-pointer" onClick={() => navigate("/stories")}>
                             <div>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                     <path
@@ -93,7 +93,7 @@ export const Header = ({ sOpen }) => {
                             <p className="hidden sm:block">Stories</p>
                         </button>
                         {user ? (
-                        <button className="flex mx-2" onClick={() => navigate("/stories/new")}>
+                        <button className="flex mx-2 hover:opacity-90 hover:cursor-pointer" onClick={() => navigate("/stories/new")}>
                             <div>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                     <path
@@ -112,14 +112,14 @@ export const Header = ({ sOpen }) => {
                     
                     {user ? (
                         <button
-                            className="mx-2 bg-gray-700 rounded-md p-2 w-24 text-white"
+                            className="mx-2 bg-gray-900 rounded-md p-2 w-24 text-white hover:opacity-90 hover:cursor-pointer"
                             onClick={handleLogoutClick}
                         >
                             Logout
                         </button>
                     ) : (
                         <button
-                            className="mx-2 bg-gray-800 rounded-md p-2 w-24 text-white"
+                            className="mx-2 bg-gray-900 rounded-md p-2 w-24 text-white hover:opacity-90 hover:cursor-pointer"
                             onClick={() => {
                                 setShowLoginRegister(true), setSwitchPage(true);
                             }}
